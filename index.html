@@ -3,21 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UniCouch | Travel the World. Stay with Students.</title>
+  <title>UniCouch | Öğrenci Konaklama ve Sosyalleşme Platformu</title>
   
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            primary: '#0F172A',
-            secondary: '#1E1B4B',
-            accent: '#FF5A36',
-            indigoBtn: '#4F46E5',
-            success: '#10B981',
-            warning: '#FBBF24'
+            brandDark: '#0F172A',
+            brandIndigo: '#4F46E5',
+            brandCoral: '#FF5A36',
           },
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
@@ -28,268 +25,249 @@
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- React 18 & ReactDOM -->
+  <!-- React & Babel CDN -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    .glass-nav {
-      background: rgba(255, 255, 255, 0.85);
+    .glass-header {
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
     }
-    @keyframes slideUp {
-      from { transform: translateY(100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .animate-slide-up {
-      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .animate-fade {
+      animation: fadeIn 0.25s ease-out forwards;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-indigo-100 selection:text-indigoBtn">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState } = React;
 
-    // --- SVG Lucide İkonları ---
-    const IconGradCap = () => (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+    // --- LUCIDE TARZI SVG İKON BİLEŞENLERİ ---
+    const IconCompass = () => (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
       </svg>
     );
     const IconSearch = () => (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
     );
-    const IconShieldCheck = ({ className = "w-4 h-4 text-sky-500" }) => (
+    const IconVerified = ({ className = "w-5 h-5 text-sky-400" }) => (
       <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-        <path fillRule="evenodd" d="M12 2a1 1 0 0 1 .65.24l6 5A1 1 0 0 1 19 8v6c0 5.25-4.14 8.78-6.62 9.87a1 1 0 0 1-.76 0C9.14 22.78 5 19.25 5 14V8a1 1 0 0 1 .35-.76l6-5A1 1 0 0 1 12 2zm3.7 7.7a1 1 0 0 0-1.4-1.4L10.5 12.1l-1.8-1.8a1 1 0 1 0-1.4 1.4l2.5 2.5a1 1 0 0 0 1.4 0l4.5-4.5z" clipRule="evenodd"/>
+        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"/>
       </svg>
     );
-    const IconMapPin = ({ className = "w-4 h-4" }) => (
-      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+    const IconPin = () => (
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
       </svg>
     );
     const IconCalendar = () => (
       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
       </svg>
     );
-    const IconX = () => (
+    const IconClose = () => (
       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     );
-    const IconSend = () => (
-      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-      </svg>
-    );
-    const IconHome = () => (
+    const IconBed = () => (
       <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        <path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>
       </svg>
     );
-    const IconCheckCircle = () => (
-      <svg className="w-5 h-5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+    const IconMessage = () => (
+      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
     );
 
-    // --- MOCK ÖĞRENCİ VERİLERİ ---
-    const initialListings = [
+    // --- MOCK VERİ SETİ ---
+    const STUDENTS_DATA = [
       {
-        id: 1,
-        name: "Lukas",
+        id: 101,
+        name: "Jonas",
         age: 22,
-        university: "RWTH Aachen University",
-        department: "Makine & Yazılım Mühendisliği",
         city: "Aachen",
         country: "Almanya",
+        university: "RWTH Aachen",
+        department: "Bilgisayar Mühendisliği",
         priceEUR: 10,
-        roomType: "Ayrı Misafir Odası & Çalışma Masası",
-        bio: "RWTH Aachen'da 3. sınıf öğrencisiyim. Hafta sonları Belçika ve Hollanda sınırında bisiklet sürmeyi, kampüs çevresindeki kahvecileri gezmeyi seviyorum. Evde hızlı internet ve sessiz bir çalışma ortamı var. Gelen arkadaşlara şehirdeki öğrenci hayatını gezdirmekten keyif alırım!",
-        interests: ["Bisiklet", "Robotik", "Elektronik Müzik", "Kahve Demleme", "Doğa Yürüyüşü"],
-        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1000&q=80"
+        roomType: "Özel Yataklı Misafir Odası",
+        bio: "Kampüse yürüme mesafesinde bir öğrenci evinde kalıyorum. Boş zamanlarımda dağ bisikleti sürmeyi, açık kaynak kodlu projeler geliştirmeyi ve yeni kültürlerden insanlarla tanışmayı seviyorum. Şehre gelen öğrencilere kampüsü ve yerel mekanları gezdirmekten mutluluk duyarım.",
+        interests: ["Bisiklet", "Yazılım", "Kahve", "Doğa Yürüyüşü", "Masa Oyunları"],
+        photo: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=900&q=80"
       },
       {
-        id: 2,
-        name: "Camille",
+        id: 102,
+        name: "Chloé",
         age: 21,
-        university: "Sorbonne Université",
-        department: "Edebiyat & Sanat Tarihi",
         city: "Paris",
         country: "Fransa",
+        university: "Sorbonne Üniversitesi",
+        department: "Görsel Sanatlar ve Tasarım",
         priceEUR: 12,
-        roomType: "Salon Açılır Kanepe (Couch)",
-        bio: "Paris Latin Mahallesi'ne 10 dakika mesafede stüdyo dairemde yaşıyorum. Boş zamanlarımda çağdaş sanat müzelerini, ikinci el kitapçıları gezerim. Fransız mutfağına ve kültürel paylaşımlara meraklı gezgin öğrencileri misafir etmekten mutluluk duyarım.",
-        interests: ["Müze Gezileri", "Fotoğrafçılık", "Fransız Sineması", "İkinci El Pazarları", "Yoga"],
-        image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1000&q=80"
+        roomType: "Salonda Rahat Açılır Kanepe",
+        bio: "Sanat galerilerini gezmeyi, eskiz yapmayı ve sokak fotoğrafçılığını çok seviyorum. Evim metro durağına sadece 3 dakika uzaklıkta. Paris'i turistik kalabalıktan uzak, gerçek bir öğrenci gözüyle deneyimlemek isteyen gezginleri bekliyorum!",
+        interests: ["Fotoğrafçılık", "Modern Sanat", "Sinema", "Müzik", "Kruvasan & Kahve"],
+        photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
       },
       {
-        id: 3,
-        name: "Matteo",
+        id: 103,
+        name: "Lorenzo",
         age: 23,
-        university: "Politecnico di Milano",
-        department: "Endüstriyel Tasarım",
         city: "Milano",
         country: "İtalya",
+        university: "Politecnico di Milano",
+        department: "Mimarlık",
         priceEUR: 14,
-        roomType: "Öğrenci Dairesinde Paylaşımlı Oda",
-        bio: "Tasarım yüksek lisansı yapıyorum. Akşamları arkadaşlarla evde taze makarna yapıp sohbet etmeyi, tasarım atölyelerinde vakit geçirmeyi seviyorum. Şehrin turistik olmayan en samimi yerlerini ve en iyi pizzacılarını göstermeye hazırım!",
-        interests: ["Mimarlık & Tasarım", "İtalyan Mutfağı", "Piyano", "Vintage Giyim", "Teknoloji"],
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1000&q=80"
+        roomType: "Paylaşımlı Öğrenci Odası",
+        bio: "Mimari maketler ve tasarım projeleriyle dolu keyifli bir öğrenci evimiz var. Akşamları ev arkadaşlarımla İtalyan yemekleri pişirip müzik dinlemeyi severiz. Milano'nun tasarım sokaklarını keşfetmek için harika bir başlangıç noktası.",
+        interests: ["Mimarlık", "İtalyan Mutfağı", "Gitar", "Tasarım", "Bisiklet"],
+        photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=900&q=80"
       },
       {
-        id: 4,
-        name: "Anouk",
-        age: 22,
-        university: "University of Amsterdam",
-        department: "Kültürel Antropoloji",
+        id: 104,
+        name: "Sanne",
+        age: 20,
         city: "Amsterdam",
         country: "Hollanda",
+        university: "University of Amsterdam",
+        department: "Sosyoloji",
         priceEUR: 15,
-        roomType: "Özel Yatak Odası",
-        bio: "Kanal boyunda tipik bir Amsterdam dairesinde yaşıyorum. Müzik festivallerine gitmeyi, yerel kafelerde kitap okumayı ve şehrin gizli bahçelerini bisikletle keşfetmeyi çok severim. Gezgin öğrencilere şehri bir yerel gibi tanıtmak isterim.",
-        interests: ["Bisiklet Turları", "Sürdürülebilirlik", "Festival", "Analog Fotoğraf", "Vegan Yemekler"],
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=80"
+        roomType: "Özel Çalışma Masalı Oda",
+        bio: "Kanalların hemen yakınında, aydınlık ve huzurlu bir apartman dairesinde yaşıyorum. Kitap kulüplerine katılmayı, elektronik müzik etkinliklerini ve şehir parklarında piknik yapmayı seviyorum. Misafirlerime yedek bisikletimi ödünç verebilirim!",
+        interests: ["Bisiklet", "Sosyoloji", "Plak Koleksiyonu", "Kamp", "Sürdürülebilirlik"],
+        photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80"
       }
     ];
 
-    const EXCHANGE_RATE = 35; // 1 EUR = 35 TRY
-
     const App = () => {
-      const [currentTab, setCurrentTab] = useState('home'); // 'home' | 'discover'
-      const [currency, setCurrency] = useState('EUR'); // 'EUR' | 'TRY'
-      const [searchCity, setSearchCity] = useState('');
-      const [checkIn, setCheckIn] = useState('');
-      const [checkOut, setCheckOut] = useState('');
-      const [selectedHost, setSelectedHost] = useState(null);
-      const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
+      // 1. STATE YÖNETİMİ
+      const [activeTab, setActiveTab] = useState('home'); // 'home' veya 'discover'
+      const [currency, setCurrency] = useState('EUR'); // 'EUR' veya 'TR'
+      const [cityQuery, setCityQuery] = useState('');
+      const [startDate, setStartDate] = useState('');
+      const [endDate, setEndDate] = useState('');
+      const [activeProfile, setActiveProfile] = useState(null); // Modal için seçili öğrenci
+      const [toastMsg, setToastMsg] = useState(null);
 
-      // Toast Yardımcı Fonksiyonu
-      const showToast = (message, type = 'info') => {
-        setToast({ visible: true, message, type });
+      // Bildirim (Toast) Tetikleyici (3 saniye sonra kaybolur)
+      const triggerToast = (text, isError = false) => {
+        setToastMsg({ text, isError });
         setTimeout(() => {
-          setToast({ visible: false, message: '', type: 'info' });
-        }, 3200);
+          setToastMsg(null);
+        }, 3000);
       };
 
-      // Para Birimi Çevirme
-      const formatPrice = (priceEUR) => {
-        if (currency === 'TRY') {
-          return `${Math.round(priceEUR * EXCHANGE_RATE)} ₺`;
-        }
-        return `€${priceEUR}`;
+      // Kur Hesaplama (1 EUR = 35 TL)
+      const renderPrice = (eurAmount) => {
+        return currency === 'EUR' ? `${eurAmount}€` : `${eurAmount * 35}₺`;
       };
 
-      // Arama Formu İşleme
-      const handleSearch = (e) => {
+      // Arama Fonksiyonu
+      const handleSearchSubmit = (e) => {
         e.preventDefault();
-        if (!searchCity.trim()) {
-          showToast("Lütfen gitmek istediğiniz şehir veya üniversiteyi yazın!", "error");
+        if (!cityQuery.trim()) {
+          triggerToast("Lütfen aramak istediğiniz şehri veya üniversiteyi girin!", true);
           return;
         }
-        setCurrentTab('discover');
-        showToast(`"${searchCity}" için onaylı öğrenci ilanları listelendi.`, "success");
+        setActiveTab('discover');
+        triggerToast(`"${cityQuery}" için öğrenci ev sahipleri listelendi.`);
       };
 
-      // İlan Filtreleme
-      const filteredListings = initialListings.filter(item => {
-        if (!searchCity.trim()) return true;
-        const q = searchCity.toLowerCase();
+      // Filtrelenmiş Liste
+      const displayedStudents = STUDENTS_DATA.filter((student) => {
+        if (!cityQuery.trim()) return true;
+        const query = cityQuery.toLowerCase();
         return (
-          item.city.toLowerCase().includes(q) ||
-          item.university.toLowerCase().includes(q) ||
-          item.country.toLowerCase().includes(q)
+          student.city.toLowerCase().includes(query) ||
+          student.university.toLowerCase().includes(query) ||
+          student.country.toLowerCase().includes(query)
         );
       });
 
       return (
-        <div className="min-h-screen flex flex-col justify-between relative">
+        <div className="min-h-screen flex flex-col">
           
-          {/* --- TOAST BİLDİRİMİ --- */}
-          {toast.visible && (
-            <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 animate-slide-up w-11/12 max-w-md">
-              <div className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl text-sm font-semibold border backdrop-blur-md ${
-                toast.type === 'error' 
-                  ? 'bg-rose-50/95 text-rose-800 border-rose-200' 
-                  : 'bg-slate-900/95 text-white border-slate-700'
+          {/* --- TOAST BİLDİRİM BİLEŞENİ --- */}
+          {toastMsg && (
+            <div className="fixed bottom-6 right-6 left-6 sm:left-auto z-50 animate-fade">
+              <div className={`px-5 py-4 rounded-2xl shadow-2xl font-semibold text-sm flex items-center gap-3 border ${
+                toastMsg.isError 
+                  ? 'bg-rose-600 text-white border-rose-500' 
+                  : 'bg-brandDark text-white border-slate-700'
               }`}>
-                {toast.type === 'error' ? (
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                ) : (
-                  <IconCheckCircle />
-                )}
-                <span className="flex-1">{toast.message}</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                <span>{toastMsg.text}</span>
               </div>
             </div>
           )}
 
-          {/* --- NAVBAR --- */}
-          <header className="sticky top-0 z-40 glass-nav border-b border-slate-200/70">
+          {/* --- 1. NAVBAR & NAVİGASYON --- */}
+          <header className="sticky top-0 z-30 glass-header border-b border-slate-200/80">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
               
               {/* Logo */}
               <div 
-                onClick={() => setCurrentTab('home')} 
-                className="flex items-center gap-2 text-primary cursor-pointer group"
+                onClick={() => setActiveTab('home')}
+                className="flex items-center gap-2.5 cursor-pointer group"
               >
-                <div className="p-2 bg-primary text-white rounded-xl group-hover:bg-indigoBtn transition-colors">
-                  <IconGradCap />
+                <div className="w-10 h-10 rounded-2xl bg-brandIndigo text-white flex items-center justify-center font-black text-xl shadow-md group-hover:bg-brandDark transition-colors">
+                  U
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-2xl font-extrabold tracking-tight">UniCouch</span>
-                  <span className="text-[10px] font-bold text-indigoBtn tracking-wider uppercase -mt-1 hidden sm:block">Student Peer Stay</span>
-                </div>
+                <span className="text-2xl font-extrabold tracking-tight text-brandDark">
+                  Uni<span className="text-brandIndigo">Couch</span>
+                </span>
               </div>
 
-              {/* Navigation Tabs */}
-              <nav className="flex items-center gap-2 sm:gap-6 text-sm font-bold">
+              {/* Sekme Menüsü (Home / Discover) */}
+              <nav className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl">
                 <button
-                  onClick={() => setCurrentTab('home')}
-                  className={`px-3 py-2 rounded-xl transition-all ${
-                    currentTab === 'home' 
-                      ? 'text-indigoBtn bg-indigo-50 font-extrabold' 
-                      : 'text-slate-600 hover:text-primary'
+                  onClick={() => setActiveTab('home')}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                    activeTab === 'home' 
+                      ? 'bg-white text-brandDark shadow-sm' 
+                      : 'text-slate-600 hover:text-brandDark'
                   }`}
                 >
                   Ana Sayfa
                 </button>
                 <button
-                  onClick={() => setCurrentTab('discover')}
-                  className={`px-3 py-2 rounded-xl transition-all ${
-                    currentTab === 'discover' 
-                      ? 'text-indigoBtn bg-indigo-50 font-extrabold' 
-                      : 'text-slate-600 hover:text-primary'
+                  onClick={() => setActiveTab('discover')}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-1.5 transition-all ${
+                    activeTab === 'discover' 
+                      ? 'bg-white text-brandIndigo shadow-sm' 
+                      : 'text-slate-600 hover:text-brandDark'
                   }`}
                 >
-                  Keşfet & İlanlar
+                  <IconCompass/>
+                  <span>Keşfet</span>
                 </button>
               </nav>
 
-              {/* Actions: Currency & Host CTA */}
+              {/* Sağ Aksiyonlar (Kur Değiştirici & Ev Sahibi Ol) */}
               <div className="flex items-center gap-3">
-                {/* Currency Switcher */}
                 <button
-                  onClick={() => setCurrency(currency === 'EUR' ? 'TRY' : 'EUR')}
-                  className="px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-black text-slate-700 transition-colors"
-                  title="Para Birimini Değiştir"
+                  onClick={() => setCurrency(currency === 'EUR' ? 'TR' : 'EUR')}
+                  className="px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-extrabold text-slate-700 transition-all shadow-sm"
                 >
-                  {currency === 'EUR' ? '€ EUR' : '₺ TRY'}
+                  {currency === 'EUR' ? '💶 EUR (€)' : '🇹🇷 TR (₺)'}
                 </button>
 
-                {/* Host Mode Button */}
                 <button
-                  onClick={() => showToast("Ev Sahibi Modu yakında kullanıma sunulacak!", "info")}
-                  className="hidden sm:block bg-coral text-white px-5 py-2.5 rounded-2xl font-bold hover:shadow-lg hover:shadow-orange-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
-                  style={{ backgroundColor: '#FF5A36' }}
+                  onClick={() => triggerToast("Ev sahibi modu yakında aktif olacak!")}
+                  className="hidden sm:inline-flex bg-brandCoral hover:opacity-95 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-orange-500/20 transition-transform active:scale-95"
                 >
                   Ev Sahibi Ol
                 </button>
@@ -298,325 +276,274 @@
             </div>
           </header>
 
-          {/* --- SAYFA İÇERİKLERİ --- */}
+          {/* --- ANA İÇERİK ALANI --- */}
           <main className="flex-1">
             
-            {/* 1. TAB: HOME (HERO & ARAMA) */}
-            {currentTab === 'home' && (
-              <div className="pt-14 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            {/* SEKME 1: HOME (HERO & ARAMA MOTORU) */}
+            {activeTab === 'home' && (
+              <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto animate-fade">
                 
-                {/* Hero Metinleri */}
                 <div className="text-center max-w-3xl mx-auto mb-12">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-50 text-sky-700 text-xs sm:text-sm font-bold border border-sky-200 mb-6">
-                    <IconShieldCheck className="w-4 h-4 text-sky-600" />
-                    Sadece Doğrulanmış .edu Üniversite Öğrencileri
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 text-brandIndigo text-xs font-bold mb-6 border border-indigo-100">
+                    <IconVerified className="w-4 h-4 text-brandIndigo"/>
+                    <span>.edu Öğrenci Belgesiyle Doğrulanmış Topluluk</span>
                   </div>
-                  <h1 className="text-4xl sm:text-6xl font-extrabold text-primary tracking-tight leading-[1.15] mb-6">
-                    Travel the World.<br/>
-                    <span className="text-indigoBtn">Stay with Students.</span>
+                  
+                  <h1 className="text-4xl sm:text-6xl font-extrabold text-brandDark tracking-tight leading-tight mb-6">
+                    Dünyayı Gez.<br />
+                    <span className="text-brandIndigo">Öğrencilerle Konakla.</span>
                   </h1>
-                  <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
-                    Pahalı otelleri ve izole pansiyonları unut. Doğrulanmış akranlarının yanında kahve parasına konakla, kampüs ve şehir hayatını yerel biriyle keşfet.
+                  
+                  <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
+                    Yüksek otel fiyatlarını geride bırak. Gittiğin şehirdeki üniversite öğrencilerinin yanında sembolik bir katkıyla konakla, kampüs kültürünü içeriden yaşa.
                   </p>
                 </div>
 
-                {/* Büyük Arama Motoru */}
+                {/* Arama Motoru Barı */}
                 <form 
-                  onSubmit={handleSearch}
-                  className="max-w-4xl mx-auto bg-white p-3 rounded-3xl shadow-xl shadow-slate-200/80 border border-slate-200/80 grid grid-cols-1 md:grid-cols-12 gap-3"
+                  onSubmit={handleSearchSubmit}
+                  className="bg-white p-3 sm:p-4 rounded-3xl shadow-xl border border-slate-200/80 grid grid-cols-1 md:grid-cols-12 gap-3 max-w-4xl mx-auto"
                 >
                   {/* Şehir Input */}
-                  <div className="md:col-span-5 px-4 py-3 bg-slate-50 hover:bg-slate-100/70 rounded-2xl flex items-center gap-3 transition-colors">
-                    <div className="p-2 bg-white rounded-xl text-indigoBtn shadow-sm">
-                      <IconMapPin className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Nereye?</label>
+                  <div className="md:col-span-5 flex items-center gap-3 bg-slate-50 px-4 py-3 rounded-2xl border border-slate-200/60 focus-within:border-brandIndigo">
+                    <span className="text-brandIndigo"><IconPin/></span>
+                    <div className="w-full">
+                      <label className="block text-[10px] font-bold uppercase text-slate-400">Şehir veya Üniversite</label>
                       <input
                         type="text"
-                        placeholder="Örn: Aachen, Paris, Milano..."
-                        value={searchCity}
-                        onChange={(e) => setSearchCity(e.target.value)}
-                        className="w-full bg-transparent border-none outline-none text-primary font-bold placeholder-slate-400 text-sm"
+                        placeholder="Aachen, Paris, Milano..."
+                        value={cityQuery}
+                        onChange={(e) => setCityQuery(e.target.value)}
+                        className="w-full bg-transparent text-sm font-bold text-brandDark outline-none placeholder-slate-400"
                       />
                     </div>
                   </div>
 
-                  {/* Tarihler (HTML5 Native Date) */}
-                  <div className="md:col-span-4 px-4 py-3 bg-slate-50 hover:bg-slate-100/70 rounded-2xl flex items-center gap-3 transition-colors">
-                    <div className="p-2 bg-white rounded-xl text-indigoBtn shadow-sm">
-                      <IconCalendar />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Tarih Aralığı</label>
+                  {/* Giriş - Çıkış Tarihleri (Native Date) */}
+                  <div className="md:col-span-4 flex items-center gap-3 bg-slate-50 px-4 py-3 rounded-2xl border border-slate-200/60">
+                    <span className="text-brandIndigo"><IconCalendar/></span>
+                    <div className="w-full">
+                      <label className="block text-[10px] font-bold uppercase text-slate-400">Giriş - Çıkış Tarihi</label>
                       <div className="flex items-center gap-1">
                         <input
                           type="date"
-                          value={checkIn}
-                          onChange={(e) => setCheckIn(e.target.value)}
-                          className="bg-transparent text-xs font-semibold text-slate-700 outline-none w-1/2"
+                          value={startDate}
+                          onChange={(e) => setStartDate(e.target.value)}
+                          className="bg-transparent text-xs font-semibold text-slate-700 outline-none w-full"
                         />
-                        <span className="text-slate-300">-</span>
+                        <span className="text-slate-400">-</span>
                         <input
                           type="date"
-                          value={checkOut}
-                          onChange={(e) => setCheckOut(e.target.value)}
-                          className="bg-transparent text-xs font-semibold text-slate-700 outline-none w-1/2"
+                          value={endDate}
+                          onChange={(e) => setEndDate(e.target.value)}
+                          className="bg-transparent text-xs font-semibold text-slate-700 outline-none w-full"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Arama Butonu */}
+                  {/* Öğrenci Bul Butonu */}
                   <div className="md:col-span-3 flex">
                     <button
                       type="submit"
-                      className="w-full bg-indigoBtn hover:bg-indigo-700 text-white rounded-2xl font-bold flex items-center justify-center gap-2 py-4 shadow-lg shadow-indigo-600/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                      className="w-full bg-brandIndigo hover:bg-indigo-700 text-white font-bold rounded-2xl py-3.5 px-6 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all"
                     >
-                      <IconSearch />
+                      <IconSearch/>
                       <span>Öğrenci Bul</span>
                     </button>
                   </div>
                 </form>
 
-                {/* Hızlı Şehir Önerileri */}
-                <div className="flex items-center justify-center gap-2 mt-6 flex-wrap text-xs text-slate-500 font-semibold">
-                  <span>Popüler Kampüsler:</span>
-                  {['Aachen', 'Paris', 'Milano', 'Amsterdam'].map(city => (
+                {/* Hızlı Etiketler */}
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
+                  <span className="text-xs font-semibold text-slate-400">Hızlı Keşfet:</span>
+                  {['Aachen', 'Paris', 'Milano', 'Amsterdam'].map((city) => (
                     <button
                       key={city}
                       onClick={() => {
-                        setSearchCity(city);
-                        setCurrentTab('discover');
-                        showToast(`"${city}" şehrine göre filtrelendi.`, "success");
+                        setCityQuery(city);
+                        setActiveTab('discover');
                       }}
-                      className="bg-white px-3 py-1.5 rounded-full border border-slate-200/80 hover:border-indigoBtn hover:text-indigoBtn transition-colors"
+                      className="text-xs font-bold px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:border-brandIndigo hover:text-brandIndigo transition-colors"
                     >
                       {city}
                     </button>
                   ))}
                 </div>
 
-                {/* Alt Bento Bilgilendirme */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
-                  <div className="bg-white p-6 rounded-3xl border border-slate-200/70 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-4">
-                      .edu
-                    </div>
-                    <h3 className="text-lg font-bold text-primary mb-2">Yalnızca Doğrulanmış Akranlar</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed">
-                      Sisteme yalnızca aktif öğrenci belgesi veya üniversite e-posta adresi onaylanmış gezginler ve ev sahipleri dahil edilir.
-                    </p>
-                  </div>
-                  <div className="bg-white p-6 rounded-3xl border border-slate-200/70 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigoBtn flex items-center justify-center font-bold mb-4">
-                      5-15€
-                    </div>
-                    <h3 className="text-lg font-bold text-primary mb-2">Sembolik Katkı Modeli</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed">
-                      Turistik fahiş otel fiyatları yerine, öğrenci arkadaşının kahve veya elektrik faturasına destek olacak sembolik tutarlarla konakla.
-                    </p>
-                  </div>
-                  <div className="bg-white p-6 rounded-3xl border border-slate-200/70 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold mb-4">
-                      <IconHome />
-                    </div>
-                    <h3 className="text-lg font-bold text-primary mb-2">Gerçek Kampüs Deneyimi</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed">
-                      Sıradan bir turist olma; kampüs kütüphanelerini, yerel öğrenci kafelerini ve öğrenci kulübü etkinliklerini ev sahibinle deneyimle.
-                    </p>
-                  </div>
-                </div>
-
-              </div>
+              </section>
             )}
 
-            {/* 2. TAB: DISCOVER (KEŞFET & İLANLAR) */}
-            {currentTab === 'discover' && (
-              <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            {/* SEKME 2: DISCOVER (İLAN SONUÇLARI) */}
+            {activeTab === 'discover' && (
+              <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto animate-fade">
                 
-                {/* Başlık ve Filtre Sıfırlama */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 mb-8 border-b border-slate-200 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-200">
                   <div>
-                    <h2 className="text-3xl font-extrabold text-primary">Müsait Öğrenci İlanları</h2>
-                    <p className="text-slate-500 text-sm font-medium mt-1">
-                      {searchCity ? `"${searchCity}" araması için ${filteredListings.length} ilan bulundu` : `Toplam ${filteredListings.length} doğrulanmış öğrenci listeleniyor`}
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-brandDark">
+                      Öğrenci Ev Sahipleri
+                    </h2>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {cityQuery 
+                        ? `"${cityQuery}" araması için ${displayedStudents.length} sonuç gösteriliyor` 
+                        : `Tüm dünyadan doğrulanmış ${displayedStudents.length} öğrenci ilanı`}
                     </p>
                   </div>
-                  {searchCity && (
+
+                  {cityQuery && (
                     <button
-                      onClick={() => setSearchCity('')}
-                      className="text-xs font-bold text-rose-500 bg-rose-50 px-4 py-2 rounded-xl self-start hover:bg-rose-100 transition-colors"
+                      onClick={() => setCityQuery('')}
+                      className="self-start px-4 py-2 rounded-xl bg-slate-200/70 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors"
                     >
-                      Filtreyi Temizle
+                      Filtreyi Temizle ({cityQuery})
                     </button>
                   )}
                 </div>
 
-                {/* İlan Kartları Grid */}
-                {filteredListings.length === 0 ? (
-                  <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
-                    <p className="text-lg font-bold text-slate-700 mb-2">Bu aramayla eşleşen ilan bulunamadı.</p>
-                    <p className="text-sm text-slate-400 mb-6">Farklı bir şehir aramayı deneyebilir veya tüm ilanlara dönebilirsin.</p>
-                    <button
-                      onClick={() => setSearchCity('')}
-                      className="bg-indigoBtn text-white px-6 py-2.5 rounded-xl font-bold text-sm"
+                {/* İlan Kartları Listesi */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {displayedStudents.map((student) => (
+                    <div
+                      key={student.id}
+                      onClick={() => setActiveProfile(student)}
+                      className="group bg-white rounded-3xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col justify-between"
                     >
-                      Tüm İlanları Göster
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {filteredListings.map(item => (
-                      <div
-                        key={item.id}
-                        onClick={() => setSelectedHost(item)}
-                        className="group bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-                      >
-                        <div>
-                          {/* Kart Fotoğrafı */}
-                          <div className="aspect-[4/3] relative overflow-hidden">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                            <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1 shadow-sm text-slate-800">
-                              <IconShieldCheck className="w-3.5 h-3.5 text-sky-500" />
-                              <span>Doğrulanmış</span>
-                            </div>
-                            <div className="absolute bottom-3 right-3 bg-slate-900/85 backdrop-blur-md text-white px-3 py-1 rounded-xl text-xs font-bold shadow-md">
-                              {formatPrice(item.priceEUR)} <span className="text-[10px] font-normal text-slate-300">/ gece</span>
-                            </div>
+                      <div>
+                        {/* Fotoğraf Alanı */}
+                        <div className="relative h-64 overflow-hidden">
+                          <img
+                            src={student.photo}
+                            alt={student.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute top-3 left-3 bg-slate-900/75 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                            <IconVerified className="w-4 h-4 text-sky-400"/>
+                            <span>.edu Onaylı</span>
                           </div>
-
-                          {/* Kart İçeriği */}
-                          <div className="p-5">
-                            <div className="flex items-center justify-between mb-1">
-                              <h3 className="text-lg font-bold text-primary flex items-center gap-1.5">
-                                {item.name}, {item.age}
-                              </h3>
-                              <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
-                                <IconMapPin className="w-3.5 h-3.5 text-indigoBtn" /> {item.city}
-                              </span>
-                            </div>
-
-                            <p className="text-xs font-semibold text-indigoBtn mb-2 truncate">
-                              {item.university}
-                            </p>
-
-                            <p className="text-xs text-slate-500 font-medium mb-4 line-clamp-2">
-                              {item.bio}
-                            </p>
-
-                            {/* İlgi Alanı Tag'leri */}
-                            <div className="flex flex-wrap gap-1.5">
-                              {item.interests.slice(0, 3).map((tag, idx) => (
-                                <span key={idx} className="text-[10px] font-bold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                                  {tag}
-                                </span>
-                              ))}
-                              {item.interests.length > 3 && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded-md">
-                                  +{item.interests.length - 3}
-                                </span>
-                              )}
-                            </div>
+                          <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-md text-brandDark px-3 py-1 rounded-xl text-sm font-extrabold shadow">
+                            {renderPrice(student.priceEUR)} <span className="text-[11px] font-medium text-slate-500">/ gece</span>
                           </div>
                         </div>
 
-                        {/* Kart Altı Oda Tipi */}
-                        <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 text-[11px] font-semibold text-slate-500 flex items-center gap-1.5">
-                          <IconHome /> {item.roomType}
+                        {/* Kart Bilgileri */}
+                        <div className="p-5">
+                          <div className="flex items-center justify-between mb-1">
+                            <h3 className="text-lg font-extrabold text-brandDark">
+                              {student.name}, {student.age}
+                            </h3>
+                            <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                              <IconPin/> {student.city}
+                            </span>
+                          </div>
+
+                          <div className="text-xs font-bold text-brandIndigo mb-3">
+                            {student.university} • {student.department}
+                          </div>
+
+                          <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4">
+                            {student.bio}
+                          </p>
+
+                          <div className="flex flex-wrap gap-1.5">
+                            {student.interests.slice(0, 3).map((interest, idx) => (
+                              <span key={idx} className="text-[11px] font-semibold px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-700">
+                                {interest}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
 
-              </div>
+                      <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 text-xs font-semibold text-slate-500 flex items-center gap-2">
+                        <IconBed/>
+                        <span className="truncate">{student.roomType}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+              </section>
             )}
 
           </main>
 
-          {/* --- TINDER / BUMBLE STİLİ PROFİL MODALI --- */}
-          {selectedHost && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          {/* --- 4. TINDER / BUMBLE STİLİ PROFİL MODALI --- */}
+          {activeProfile && (
+            <div 
+              onClick={() => setActiveProfile(null)}
+              className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade"
+            >
               <div 
-                className="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col max-h-[92vh] overflow-y-auto relative animate-slide-up"
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-slate-200 max-h-[90vh] flex flex-col"
               >
-                {/* Kapat Butonu */}
-                <button
-                  onClick={() => setSelectedHost(null)}
-                  className="absolute top-4 right-4 z-20 p-2.5 bg-black/40 hover:bg-black/60 text-white rounded-full backdrop-blur-md transition-colors"
-                >
-                  <IconX />
-                </button>
-
-                {/* Üst Kısım: Dating App Stili Fotoğraf ve Gradient Katmanı */}
-                <div className="relative w-full h-[400px] flex-shrink-0">
+                {/* Üst Kısım: 420px Tam Kaplayan Fotoğraf + Siyah Degrade */}
+                <div className="relative h-[420px] w-full flex-shrink-0">
                   <img
-                    src={selectedHost.image}
-                    alt={selectedHost.name}
+                    src={activeProfile.photo}
+                    alt={activeProfile.name}
                     className="w-full h-full object-cover"
                   />
-                  {/* Siyah Degrade (Gradient) */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                  
+                  {/* Kapatma Butonu */}
+                  <button
+                    onClick={() => setActiveProfile(null)}
+                    className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 hover:bg-black/75 text-white flex items-center justify-center backdrop-blur-md transition-colors"
+                  >
+                    <IconClose/>
+                  </button>
 
-                  {/* Fotoğraf Üstü Bilgileri */}
-                  <div className="absolute bottom-6 left-6 right-6 text-white">
-                    <div className="flex items-center gap-2 mb-1">
+                  {/* Fiyat Rozeti */}
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-2xl text-sm font-extrabold text-brandDark shadow-lg">
+                    {renderPrice(activeProfile.priceEUR)} / gece
+                  </div>
+
+                  {/* Alt Siyah Degrade (Gradient) ve Üzerindeki Yazılar */}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent pt-24 pb-6 px-6 text-white">
+                    <div className="flex items-center gap-2">
                       <h2 className="text-3xl font-extrabold tracking-tight">
-                        {selectedHost.name}, {selectedHost.age}
+                        {activeProfile.name}, {activeProfile.age}
                       </h2>
-                      <span title="Doğrulanmış Öğrenci">
-                        <IconShieldCheck className="w-6 h-6 text-sky-400" />
-                      </span>
+                      <IconVerified className="w-6 h-6 text-sky-400"/>
                     </div>
-                    <p className="text-sm font-semibold text-slate-200 mb-1">
-                      {selectedHost.university}
+                    <p className="text-sm font-semibold text-indigo-200 mt-1">
+                      {activeProfile.university} — {activeProfile.department}
                     </p>
-                    <p className="text-xs text-slate-300 flex items-center gap-1">
-                      <IconMapPin className="w-3.5 h-3.5 text-accent" /> {selectedHost.city}, {selectedHost.country} &bull; {selectedHost.department}
+                    <p className="text-xs text-slate-300 flex items-center gap-1 mt-1">
+                      <IconPin/> {activeProfile.city}, {activeProfile.country}
                     </p>
                   </div>
                 </div>
 
-                {/* Alt Kısım: Detaylar & Aksiyon */}
-                <div className="p-6 flex flex-col gap-6">
+                {/* Alt Kısım: Beyaz Alan (Bio, Etiketler, İstek Butonu) */}
+                <div className="p-6 overflow-y-auto space-y-5 bg-white">
                   
-                  {/* Fiyat & Oda Tipi Barı */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div>
-                      <div className="text-[11px] font-bold text-slate-400 uppercase">Gecelik Katkı Payı</div>
-                      <div className="text-xl font-extrabold text-primary">
-                        {formatPrice(selectedHost.priceEUR)}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[11px] font-bold text-slate-400 uppercase">Konaklama Tipi</div>
-                      <div className="text-sm font-bold text-slate-700 flex items-center gap-1 justify-end">
-                        <IconHome /> {selectedHost.roomType}
-                      </div>
-                    </div>
+                  {/* Kalınacak Yer Tipi */}
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-slate-100 px-3.5 py-2.5 rounded-xl">
+                    <IconBed/>
+                    <span>Konaklama: {activeProfile.roomType}</span>
                   </div>
 
-                  {/* Biyografi */}
+                  {/* Detaylı Biyografi */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Hakkında</h4>
-                    <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                      {selectedHost.bio}
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">
+                      Hakkında
+                    </h4>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      {activeProfile.bio}
                     </p>
                   </div>
 
-                  {/* İlgi Alanları (Tags) */}
+                  {/* İlgi Alanı Etiketleri (Pills) */}
                   <div>
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">İlgi Alanları & Aktiviteler</h4>
+                    <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+                      İlgi Alanları
+                    </h4>
                     <div className="flex flex-wrap gap-2">
-                      {selectedHost.interests.map((tag, i) => (
+                      {activeProfile.interests.map((tag, i) => (
                         <span
                           key={i}
-                          className="px-3 py-1.5 bg-indigo-50/80 text-indigoBtn font-semibold text-xs rounded-xl border border-indigo-100"
+                          className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-brandIndigo border border-indigo-100"
                         >
                           #{tag}
                         </span>
@@ -624,38 +551,27 @@
                     </div>
                   </div>
 
-                  {/* İstek Gönder / Mesaj Butonu */}
+                  {/* Aksiyon Butonu */}
                   <button
                     onClick={() => {
-                      const hostName = selectedHost.name;
-                      setSelectedHost(null);
-                      showToast(`${hostName} adlı öğrenciye konaklama talebiniz iletildi!`, "success");
+                      const targetName = activeProfile.name;
+                      setActiveProfile(null);
+                      triggerToast(`${targetName} adlı öğrenciye konaklama ve mesaj isteği başarıyla gönderildi!`);
                     }}
-                    className="w-full bg-indigoBtn hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+                    className="w-full bg-brandIndigo hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/25 transition-all active:scale-95"
                   >
-                    <IconSend />
-                    <span>Konaklama İsteği Gönder</span>
+                    <IconMessage/>
+                    <span>İstek Gönder / Mesaj At</span>
                   </button>
 
                 </div>
-
               </div>
             </div>
           )}
 
           {/* --- FOOTER --- */}
-          <footer className="bg-white border-t border-slate-200/80 py-8 text-center text-xs text-slate-400 font-medium">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2 text-slate-700 font-bold text-sm">
-                <IconGradCap /> UniCouch
-              </div>
-              <p>&copy; 2026 UniCouch. Doğrulanmış Öğrenci Konaklama Topluluğu.</p>
-              <div className="flex gap-4">
-                <a href="#" className="hover:text-slate-600">Gizlilik</a>
-                <a href="#" className="hover:text-slate-600">Topluluk Kuralları</a>
-                <a href="#" className="hover:text-slate-600">Destek</a>
-              </div>
-            </div>
+          <footer className="bg-white border-t border-slate-200/80 py-6 px-4 text-center text-xs text-slate-400 font-medium">
+            UniCouch © 2026 — Üniversite Öğrencileri İçin Küresel Konaklama ve Kültür Ağı
           </footer>
 
         </div>
@@ -663,7 +579,7 @@
     };
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    root.render(<App/>);
   </script>
 </body>
 </html>
